@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased selection:bg-[#C5A880] selection:text-[#111111]">
-      <body className="min-h-full flex flex-col bg-[#FAFAF8] text-[#141413]">
+    <html lang="en" className="antialiased selection:bg-[#C5A880] selection:text-[#111111]">
+      <body className="min-h-screen flex flex-col bg-[#FAFAF8] text-[#141413]">
         <SmoothScroll>
           <CustomCursor />
           <Header />

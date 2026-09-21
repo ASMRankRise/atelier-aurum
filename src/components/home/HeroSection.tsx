@@ -173,6 +173,20 @@ export default function HeroSection({ onSelectCategory }: HeroSectionProps) {
           '-=0.4'
         );
 
+      tl.eventCallback('onComplete', () => {
+        gsap.set(
+          [
+            pillsRef.current,
+            markRef.current,
+            subtitleRef.current,
+            tabsRef.current,
+            facadeWrapperRef.current,
+            badgeRef.current,
+          ],
+          { clearProps: 'opacity,transform' }
+        );
+      });
+
       // 2. Parallax zoom on the huge curved facade image on scroll
       if (facadeImageRef.current && facadeWrapperRef.current) {
         gsap.to(facadeImageRef.current, {

@@ -38,8 +38,9 @@ export default function ConsultationSection() {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top 75%',
-          toggleActions: 'play none none reverse',
+          start: 'top 85%',
+          once: true,
+          toggleActions: 'play none none none',
         },
       });
     },

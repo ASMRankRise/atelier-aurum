@@ -34,44 +34,55 @@ export default function HorizontalShowcase() {
         if (!trackRef.current || !containerRef.current) return;
 
         const track = trackRef.current;
-        const totalDistance = track.scrollWidth - window.innerWidth + 80;
+        const container = containerRef.current;
+
+        // Robust calculation summing all children cards to avoid browser scrollWidth clamping
+        const getDistance = () => {
+          if (!track) return 0;
+          const cards = Array.from(track.children) as HTMLElement[];
+          if (!cards.length) return 0;
+          const cardWidths = cards.reduce((total, el) => total + el.getBoundingClientRect().width, 0);
+          const gapTotal = Math.max(0, (cards.length - 1) * 32); // 32px gap between cards
+          const computedFullWidth = Math.max(track.scrollWidth, cardWidths + gapTotal);
+          return Math.max(0, computedFullWidth - window.innerWidth + 140);
+        };
 
         const tween = gsap.to(track, {
-          x: -totalDistance,
+          x: () => -getDistance(),
           ease: 'none',
           scrollTrigger: {
-            trigger: containerRef.current,
+            trigger: container,
             pin: true,
             start: 'top top',
-            end: () => `+=${totalDistance + 400}`,
-            scrub: 1.1,
+            end: () => `+=${getDistance()}`,
+            scrub: 1,
             invalidateOnRefresh: true,
+            anticipatePin: 1,
+            pinSpacing: true,
             onUpdate: (self) => {
               setScrollProgress(self.progress);
             },
           },
         });
 
-        // Parallax image shift inside cards while sliding
-        const imageInners = track.querySelectorAll('.parallax-card-image');
-        imageInners.forEach((img) => {
-          gsap.fromTo(
-            img,
-            { xPercent: -10, scale: 1.05 },
-            {
-              xPercent: 10,
-              scale: 1.12,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: img,
-                containerAnimation: tween,
-                start: 'left right',
-                end: 'right left',
-                scrub: true,
-              },
-            }
-          );
+        // Parallax depth shift on card photos as they slide
+        const imageElements = track.querySelectorAll('img');
+        imageElements.forEach((img) => {
+          gsap.to(img, {
+            scale: 1.08,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: container,
+              start: 'top top',
+              end: () => `+=${getDistance()}`,
+              scrub: 1,
+            },
+          });
         });
+
+        return () => {
+          tween.kill();
+        };
       });
 
       return () => mm.revert();
@@ -99,13 +110,13 @@ export default function HorizontalShowcase() {
     <section
       ref={containerRef}
       id="projects"
-      className="relative bg-[#111111] text-[#ededed] py-20 lg:py-0 overflow-hidden font-sans border-b border-stone-800"
+      className="relative bg-[#111111] text-[#ededed] py-16 lg:py-0 font-sans border-b border-stone-800"
     >
       {/* Background Architectural Drafting Grid */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.035] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:44px_44px]" />
 
       {/* Desktop Sticky Header Banner */}
-      <div className="lg:h-screen flex flex-col justify-between pt-8 lg:pt-14 pb-8 lg:pb-12 px-4 sm:px-8 lg:px-12 max-w-full">
+      <div className="lg:h-screen lg:min-h-[640px] lg:max-h-[960px] flex flex-col justify-between pt-6 lg:pt-10 pb-6 lg:pb-8 px-4 sm:px-8 lg:px-12 max-w-full overflow-hidden">
         
         {/* Section Title & Navigation Bar */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-6 border-b border-stone-800/80">
@@ -173,24 +184,22 @@ export default function HorizontalShowcase() {
         {/* Horizontal Slider Track */}
         <div
           ref={trackRef}
-          className="my-auto flex gap-6 sm:gap-8 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory py-4 lg:py-0 will-change-transform"
+          className="my-auto flex lg:inline-flex w-max gap-6 sm:gap-8 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory lg:snap-none py-4 lg:py-0 will-change-transform"
         >
           {SIGNATURE_PROJECTS.map((project, idx) => (
             <div
               key={project.id}
-              className="w-[85vw] sm:w-[520px] lg:w-[620px] shrink-0 bg-[#161616] border border-stone-800/90 rounded-2xl sm:rounded-3xl overflow-hidden group hover:border-[#C5A880]/70 transition-all duration-500 shadow-2xl flex flex-col justify-between snap-center"
+              className="w-[85vw] sm:w-[480px] lg:w-[560px] shrink-0 bg-[#161616] border border-stone-800/90 rounded-2xl sm:rounded-3xl overflow-hidden group hover:border-[#C5A880]/70 transition-all duration-500 shadow-2xl flex flex-col justify-between snap-center"
             >
               {/* Card Image Wrapper with Parallax Inner Container */}
-              <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden bg-stone-900">
-                <div className="parallax-card-image absolute -inset-6 w-[calc(100%+3rem)] h-[calc(100%+3rem)] will-change-transform">
-                  <Image
-                    src={project.heroImage}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 768px) 85vw, 640px"
-                    className="object-cover object-center filter brightness-[0.88] contrast-[1.05] group-hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
+              <div className="relative aspect-[16/9] w-full overflow-hidden bg-stone-900">
+                <Image
+                  src={project.heroImage}
+                  alt={project.title}
+                  fill
+                  sizes="(max-width: 768px) 85vw, 560px"
+                  className="object-cover object-center filter brightness-[0.88] contrast-[1.05] group-hover:scale-105 transition-transform duration-700"
+                />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-[#161616] via-transparent to-black/30 pointer-events-none" />
 
@@ -212,7 +221,7 @@ export default function HorizontalShowcase() {
               </div>
 
               {/* Card Content & Specifications */}
-              <div className="p-6 sm:p-8 flex flex-col justify-between flex-1">
+              <div className="p-5 sm:p-6 lg:p-7 flex flex-col justify-between flex-1">
                 <div>
                   <div className="flex items-center gap-2 text-[11px] font-mono text-stone-400 mb-2">
                     <MapPin className="w-3.5 h-3.5 text-[#C5A880]" />
@@ -230,7 +239,7 @@ export default function HorizontalShowcase() {
                   </p>
 
                   {/* Materials Badges */}
-                  <div className="mt-4 flex flex-wrap gap-1.5">
+                  <div className="mt-3.5 flex flex-wrap gap-1.5">
                     {project.materials.slice(0, 3).map((mat) => (
                       <span
                         key={mat}
@@ -243,7 +252,7 @@ export default function HorizontalShowcase() {
                 </div>
 
                 {/* Card Action Footer */}
-                <div className="mt-6 pt-5 border-t border-stone-800/80 flex items-center justify-between text-xs font-mono">
+                <div className="mt-5 pt-4 border-t border-stone-800/80 flex items-center justify-between text-xs font-mono">
                   <button
                     type="button"
                     onClick={() => setActiveProjectModal(project)}

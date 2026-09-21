@@ -71,7 +71,8 @@ export default function ArchitecturalHatch({
           scrollTrigger: {
             trigger: containerRef.current,
             start: 'top 88%',
-            toggleActions: 'play none none reverse',
+            once: true,
+            toggleActions: 'play none none none',
           },
         }
       );

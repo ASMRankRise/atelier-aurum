@@ -70,7 +70,8 @@ export function revealOnScroll(
         trigger: trigger as gsap.DOMTarget,
         start,
         scrub,
-        toggleActions: scrub ? undefined : "play none none reverse",
+        once: !scrub,
+        toggleActions: scrub ? undefined : "play none none none",
       },
     }
   );
@@ -121,7 +122,8 @@ export function textStagger(
       scrollTrigger: {
         trigger: trigger as gsap.DOMTarget,
         start,
-        toggleActions: "play none none reverse",
+        once: true,
+        toggleActions: "play none none none",
       },
     }
   );

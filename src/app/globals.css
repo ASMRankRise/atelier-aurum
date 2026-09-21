@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+@import "lenis/dist/lenis.css";
 @import "tailwindcss";
 
 :root {
@@ -86,7 +87,13 @@ body {
   min-height: 100%;
   background-color: var(--bg-warm);
   color: var(--text-primary);
-  overflow-x: hidden;
+  /* Use clip instead of hidden so GSAP ScrollTrigger pinning and scroll metrics are not corrupted */
+  overflow-x: clip;
+}
+
+/* Ensure GSAP pin-spacers never trap pointer events or cause layout collapse */
+.pin-spacer {
+  pointer-events: auto !important;
 }
 
 /* Architectural Hairline Divider Utilities */

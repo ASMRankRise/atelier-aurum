@@ -47,8 +47,9 @@ export default function TestimonialsSection() {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
+          start: 'top 85%',
+          once: true,
+          toggleActions: 'play none none none',
         },
       });
     },

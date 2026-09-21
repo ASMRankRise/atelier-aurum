@@ -153,8 +153,9 @@ export default function MaterialLaboratory() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top 82%',
-          toggleActions: 'play none none reverse',
+          start: 'top 85%',
+          once: true,
+          toggleActions: 'play none none none',
         },
       });
 

@@ -12,9 +12,9 @@ export default function BuildAtScaleSection() {
   const paragraphRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
-  const [count1, setCount1] = useState(0);
-  const [count2, setCount2] = useState(0);
-  const [count3, setCount3] = useState(0);
+  const [count1, setCount1] = useState(40);
+  const [count2, setCount2] = useState(80);
+  const [count3, setCount3] = useState(95);
 
   useGSAP(
     () => {
@@ -22,25 +22,26 @@ export default function BuildAtScaleSection() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top 82%',
-          toggleActions: 'play none none reverse',
+          start: 'top 85%',
+          once: true,
+          toggleActions: 'play none none none',
         },
       });
 
       tl.from(headlineRef.current, {
         y: 35,
         opacity: 0,
-        duration: 1,
+        duration: 0.9,
         ease: 'power3.out',
       }).from(
         paragraphRef.current,
         {
           y: 25,
           opacity: 0,
-          duration: 0.9,
+          duration: 0.8,
           ease: 'power3.out',
         },
-        '-=0.7'
+        '-=0.6'
       );
 
       // 2. Animate stat cards entrance
@@ -49,13 +50,14 @@ export default function BuildAtScaleSection() {
         gsap.from(cards, {
           y: 40,
           opacity: 0,
-          duration: 1,
-          stagger: 0.15,
+          duration: 0.9,
+          stagger: 0.12,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: cardsRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
+            start: 'top 88%',
+            once: true,
+            toggleActions: 'play none none none',
           },
         });
       }
@@ -66,11 +68,12 @@ export default function BuildAtScaleSection() {
         c1: 40,
         c2: 80,
         c3: 95,
-        duration: 2.2,
+        duration: 1.8,
         ease: 'power2.out',
         scrollTrigger: {
           trigger: cardsRef.current,
-          start: 'top 85%',
+          start: 'top 88%',
+          once: true,
           toggleActions: 'play none none none',
         },
         onUpdate: () => {
