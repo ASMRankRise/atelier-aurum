@@ -22,44 +22,42 @@ export default function BuildAtScaleSection() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top 85%',
+          start: 'top 90%',
           once: true,
-          toggleActions: 'play none none none',
         },
       });
 
-      tl.from(headlineRef.current, {
-        y: 35,
-        opacity: 0,
-        duration: 0.9,
-        ease: 'power3.out',
-      }).from(
+      tl.fromTo(
+        headlineRef.current,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', clearProps: 'all' }
+      ).fromTo(
         paragraphRef.current,
-        {
-          y: 25,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-        },
-        '-=0.6'
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', clearProps: 'all' },
+        '-=0.5'
       );
 
       // 2. Animate stat cards entrance
       if (cardsRef.current) {
-        const cards = cardsRef.current.children;
-        gsap.from(cards, {
-          y: 40,
-          opacity: 0,
-          duration: 0.9,
-          stagger: 0.12,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: cardsRef.current,
-            start: 'top 88%',
-            once: true,
-            toggleActions: 'play none none none',
-          },
-        });
+        const cards = Array.from(cardsRef.current.children);
+        gsap.fromTo(
+          cards,
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: 'power3.out',
+            clearProps: 'all',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top 85%',
+              once: true,
+            },
+          }
+        );
       }
 
       // 3. Count up animation for 40%, 80%, 95%
@@ -71,10 +69,9 @@ export default function BuildAtScaleSection() {
         duration: 1.8,
         ease: 'power2.out',
         scrollTrigger: {
-          trigger: cardsRef.current,
-          start: 'top 88%',
+          trigger: containerRef.current,
+          start: 'top 85%',
           once: true,
-          toggleActions: 'play none none none',
         },
         onUpdate: () => {
           setCount1(Math.round(counterTarget.c1));

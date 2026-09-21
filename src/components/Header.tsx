@@ -87,8 +87,8 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled
-            ? 'bg-[#0c0c0c]/90 backdrop-blur-xl border-b border-stone-800/80 shadow-2xl py-3.5'
-            : 'bg-gradient-to-b from-black/80 via-black/40 to-transparent backdrop-blur-sm border-b border-white/5 py-5'
+            ? 'bg-[#0c0c0c]/95 backdrop-blur-xl border-b border-stone-800/80 shadow-2xl py-3.5'
+            : 'bg-[#FAFAF8]/85 backdrop-blur-md border-b border-[#E5E3DD]/80 shadow-sm py-4 sm:py-5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,18 +101,38 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                 className="group flex items-baseline gap-2.5 text-decoration-none select-none"
               >
                 {/* ARCHIØN Architectural Wordmark */}
-                <div className="flex items-center tracking-[0.28em] font-light text-xl sm:text-2xl text-white group-hover:text-amber-300 transition-colors duration-300 font-sans">
+                <div
+                  className={`flex items-center tracking-[0.28em] font-light text-xl sm:text-2xl transition-colors duration-300 font-sans ${
+                    isScrolled
+                      ? 'text-white group-hover:text-amber-300'
+                      : 'text-[#141413] group-hover:text-[#A67C52]'
+                  }`}
+                >
                   <span>ARCHI</span>
-                  <span className="relative inline-flex items-center justify-center font-serif italic text-amber-400 mx-[0.5px]">
+                  <span
+                    className={`relative inline-flex items-center justify-center font-serif italic mx-[0.5px] ${
+                      isScrolled ? 'text-amber-400' : 'text-[#C5A880]'
+                    }`}
+                  >
                     Ø
-                    <span className="absolute -top-1 right-0 text-[9px] text-amber-500/70 font-mono not-italic">
+                    <span
+                      className={`absolute -top-1 right-0 text-[9px] font-mono not-italic ${
+                        isScrolled ? 'text-amber-500/70' : 'text-[#A67C52]'
+                      }`}
+                    >
                       °
                     </span>
                   </span>
                   <span>N</span>
                 </div>
 
-                <span className="hidden xl:inline-block text-[9px] font-mono tracking-[0.25em] text-stone-400 uppercase border-l border-stone-800 pl-3">
+                <span
+                  className={`hidden xl:inline-block text-[9px] font-mono tracking-[0.25em] uppercase border-l pl-3 transition-colors ${
+                    isScrolled
+                      ? 'text-stone-400 border-stone-800'
+                      : 'text-[#8C8983] border-[#E5E3DD]'
+                  }`}
+                >
                   PRAXIS
                 </span>
               </Link>
@@ -124,10 +144,18 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="relative px-3 py-1.5 text-xs font-mono tracking-[0.2em] uppercase text-stone-300 hover:text-amber-300 transition-colors group"
+                  className={`relative px-3 py-1.5 text-xs font-mono tracking-[0.2em] uppercase transition-colors group ${
+                    isScrolled
+                      ? 'text-stone-300 hover:text-amber-300'
+                      : 'text-[#6B6862] hover:text-[#141413]'
+                  }`}
                 >
                   <span>{item.label}</span>
-                  <span className="absolute bottom-0 left-3 right-3 h-[1px] bg-amber-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                  <span
+                    className={`absolute bottom-0 left-3 right-3 h-[1px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ${
+                      isScrolled ? 'bg-amber-400' : 'bg-[#C5A880]'
+                    }`}
+                  />
                 </Link>
               ))}
             </nav>
@@ -137,50 +165,94 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
               
               {/* Live World Clocks (London, New York, Riyadh) */}
               <div
-                className="hidden lg:flex items-center gap-3 bg-stone-900/80 border border-stone-800/80 px-3 py-1.5 rounded-full text-[11px] font-mono tracking-wider shadow-inner"
+                className={`hidden lg:flex items-center gap-3 px-3 py-1.5 rounded-full text-[11px] font-mono tracking-wider transition-colors ${
+                  isScrolled
+                    ? 'bg-stone-900/80 border border-stone-800/80 text-stone-300 shadow-inner'
+                    : 'bg-[#F5F4F0] border border-[#E5E3DD] text-[#141413] shadow-sm'
+                }`}
                 title="Live Regional Architectural Studio Times"
               >
-                <div className="flex items-center gap-1.5 text-stone-400">
-                  <Clock className="w-3 h-3 text-amber-400/90 animate-pulse" />
-                  <span className="text-[10px] text-stone-400 font-medium">STUDIOS:</span>
+                <div
+                  className={`flex items-center gap-1.5 ${
+                    isScrolled ? 'text-stone-400' : 'text-[#8C8983]'
+                  }`}
+                >
+                  <Clock
+                    className={`w-3 h-3 animate-pulse ${
+                      isScrolled ? 'text-amber-400/90' : 'text-[#C5A880]'
+                    }`}
+                  />
+                  <span className="text-[10px] font-medium">STUDIOS:</span>
                 </div>
 
-                <div className="flex items-center gap-2.5 divide-x divide-stone-800 text-stone-300">
+                <div
+                  className={`flex items-center gap-2.5 divide-x ${
+                    isScrolled ? 'divide-stone-800 text-stone-300' : 'divide-[#E5E3DD] text-[#141413]'
+                  }`}
+                >
                   <div className="flex items-center gap-1 pl-0">
-                    <span className="text-stone-400 text-[10px]">LON</span>
-                    <span className="text-stone-100 font-semibold">{worldTimes.london}</span>
+                    <span className={isScrolled ? 'text-stone-400 text-[10px]' : 'text-[#8C8983] text-[10px]'}>
+                      LON
+                    </span>
+                    <span className="font-semibold">{worldTimes.london}</span>
                   </div>
                   <div className="flex items-center gap-1 pl-2.5">
-                    <span className="text-stone-400 text-[10px]">NYC</span>
-                    <span className="text-stone-100 font-semibold">{worldTimes.newYork}</span>
+                    <span className={isScrolled ? 'text-stone-400 text-[10px]' : 'text-[#8C8983] text-[10px]'}>
+                      NYC
+                    </span>
+                    <span className="font-semibold">{worldTimes.newYork}</span>
                   </div>
                   <div className="flex items-center gap-1 pl-2.5">
-                    <span className="text-amber-400/90 text-[10px]">RUH</span>
-                    <span className="text-stone-100 font-semibold">{worldTimes.riyadh}</span>
+                    <span
+                      className={`text-[10px] ${
+                        isScrolled ? 'text-amber-400/90' : 'text-[#C5A880]'
+                      }`}
+                    >
+                      RUH
+                    </span>
+                    <span className="font-semibold">{worldTimes.riyadh}</span>
                   </div>
                 </div>
               </div>
 
-              {/* "Get in touch" Pill Button */}
+              {/* Consultation Trigger Button */}
               <button
                 type="button"
                 onClick={handleOpenConsultation}
-                className="relative inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full text-[11px] font-mono tracking-[0.2em] uppercase font-semibold text-stone-950 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-200 transition-all duration-300 shadow-md shadow-amber-500/20 hover:shadow-amber-400/30 hover:scale-[1.02] active:scale-[0.98]"
+                className={`relative inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full text-[11px] font-mono tracking-[0.2em] uppercase font-semibold transition-all duration-300 shadow-md cursor-pointer ${
+                  isScrolled
+                    ? 'text-stone-950 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-200 shadow-amber-500/20 hover:shadow-amber-400/30 hover:scale-[1.02] active:scale-[0.98]'
+                    : 'text-white bg-[#141413] hover:bg-[#2A2825] border border-[#141413] shadow-stone-900/10 hover:scale-[1.02] active:scale-[0.98]'
+                }`}
               >
                 <span className="relative z-10">Get in touch</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-stone-950 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <ArrowUpRight
+                  className={`w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
+                    isScrolled ? 'text-stone-950' : 'text-[#C5A880]'
+                  }`}
+                />
               </button>
 
-              {/* Mobile Hamburger Toggle Button */}
+              {/* Mobile Hamburger Drawer Toggle */}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 text-stone-400 hover:text-white hover:bg-stone-900 rounded-lg transition-colors"
-                aria-label={mobileMenuOpen ? 'Close Menu' : 'Open Menu'}
+                className={`md:hidden p-2 rounded-lg border transition-colors ${
+                  isScrolled
+                    ? 'bg-stone-900 border-stone-800 text-stone-200 hover:text-white'
+                    : 'bg-[#F5F4F0] border-[#E5E3DD] text-[#141413] hover:border-[#C5A880]'
+                }`}
+                aria-label="Toggle navigation menu"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? (
+                  <X className="w-5 h-5 text-amber-400" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
               </button>
+
             </div>
+
           </div>
         </div>
       </header>

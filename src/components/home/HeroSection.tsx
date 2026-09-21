@@ -37,7 +37,7 @@ const CATEGORY_SHOWCASE = {
     year: '2025',
     metric: '42% Solar Load Reduction',
     facadeSpec: 'Curved Vertical Louvers • Mass Timber Ribs',
-    image: 'https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=2400&q=85',
+    image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2400&q=85',
     slug: 'summit-university-campus',
   },
   education: {
@@ -49,7 +49,7 @@ const CATEGORY_SHOWCASE = {
     year: '2025',
     metric: '42% Peak Heat Reduction',
     facadeSpec: 'Double-Skin Glazing • Precast Basalt',
-    image: 'https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=2400&q=85',
+    image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2400&q=85',
     slug: 'summit-university-campus',
   },
   civic: {

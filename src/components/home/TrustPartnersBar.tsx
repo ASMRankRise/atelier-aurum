@@ -73,26 +73,27 @@ export default function TrustPartnersBar() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top 88%',
-          toggleActions: 'play none none reverse',
+          start: 'top 95%',
+          once: true,
         },
       });
 
-      tl.from(titleRef.current, {
-        y: 20,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      }).from(
+      tl.fromTo(
+        titleRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', clearProps: 'all' }
+      ).fromTo(
         gridRef.current?.children || [],
+        { y: 20, opacity: 0 },
         {
-          y: 25,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.08,
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.05,
           ease: 'power3.out',
+          clearProps: 'all',
         },
-        '-=0.5'
+        '-=0.3'
       );
     },
     { scope: containerRef }

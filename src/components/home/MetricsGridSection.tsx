@@ -22,38 +22,34 @@ export default function MetricsGridSection() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top 85%',
+          start: 'top 90%',
           once: true,
-          toggleActions: 'play none none none',
         },
       });
 
-      tl.from(headlineRef.current, {
-        y: 30,
-        opacity: 0,
-        duration: 0.9,
-        ease: 'power3.out',
-      })
-        .from(
+      tl.fromTo(
+        headlineRef.current,
+        { y: 25, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', clearProps: 'all' }
+      )
+        .fromTo(
           featureCardRef.current,
-          {
-            y: 40,
-            opacity: 0,
-            duration: 1,
-            ease: 'power3.out',
-          },
-          '-=0.6'
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', clearProps: 'all' },
+          '-=0.4'
         )
-        .from(
+        .fromTo(
           bulletsGridRef.current?.children || [],
+          { y: 25, opacity: 0 },
           {
-            y: 30,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.12,
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            stagger: 0.08,
             ease: 'power3.out',
+            clearProps: 'all',
           },
-          '-=0.7'
+          '-=0.5'
         );
     },
     { scope: containerRef }

@@ -85,7 +85,7 @@ Post-occupancy infrared tracking demonstrated a 310% increase in serendipitous i
       role: 'Lead Partner, Civic & Institutional Praxis',
     },
     category: 'Urban Theory',
-    image: 'https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1600&q=85',
+    image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=85',
     tags: ['Campus Masterplanning', 'Mass Timber', 'Spatial Sociology', 'Higher Education'],
     featured: true,
   },

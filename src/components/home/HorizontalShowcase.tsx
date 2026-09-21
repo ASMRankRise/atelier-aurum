@@ -21,7 +21,9 @@ const SIGNATURE_PROJECTS = PROJECTS.slice(0, 6);
 export default function HorizontalShowcase() {
   const containerRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const progressPercentRef = useRef<HTMLSpanElement>(null);
+  const progressIndexRef = useRef<HTMLSpanElement>(null);
   const [activeProjectModal, setActiveProjectModal] = useState<Project | null>(null);
   const [activeMobileIndex, setActiveMobileIndex] = useState(0);
 
@@ -44,7 +46,7 @@ export default function HorizontalShowcase() {
           const cardWidths = cards.reduce((total, el) => total + el.getBoundingClientRect().width, 0);
           const gapTotal = Math.max(0, (cards.length - 1) * 32); // 32px gap between cards
           const computedFullWidth = Math.max(track.scrollWidth, cardWidths + gapTotal);
-          return Math.max(0, computedFullWidth - window.innerWidth + 140);
+          return Math.max(0, computedFullWidth - window.innerWidth + 160);
         };
 
         const tween = gsap.to(track, {
@@ -60,7 +62,21 @@ export default function HorizontalShowcase() {
             anticipatePin: 1,
             pinSpacing: true,
             onUpdate: (self) => {
-              setScrollProgress(self.progress);
+              // Direct high-performance DOM updates without React re-render lag
+              const pct = Math.round(self.progress * 100);
+              const cardIdx = Math.min(
+                SIGNATURE_PROJECTS.length,
+                Math.max(1, Math.floor(self.progress * SIGNATURE_PROJECTS.length) + 1)
+              );
+              if (progressBarRef.current) {
+                progressBarRef.current.style.width = `${Math.max(4, self.progress * 100)}%`;
+              }
+              if (progressPercentRef.current) {
+                progressPercentRef.current.textContent = `${pct}%`;
+              }
+              if (progressIndexRef.current) {
+                progressIndexRef.current.textContent = `0${cardIdx}`;
+              }
             },
           },
         });
@@ -139,15 +155,18 @@ export default function HorizontalShowcase() {
           <div className="hidden lg:flex items-center gap-6">
             <div className="flex flex-col items-end gap-1.5 font-mono text-xs text-stone-400">
               <div className="flex items-center gap-2">
-                <span>INDEX // 01 — 0{SIGNATURE_PROJECTS.length}</span>
-                <span className="text-[#C5A880] font-semibold">
-                  {Math.round(scrollProgress * 100)}%
+                <span>
+                  INDEX // <span ref={progressIndexRef} className="text-white font-semibold">01</span> — 0{SIGNATURE_PROJECTS.length}
+                </span>
+                <span ref={progressPercentRef} className="text-[#C5A880] font-semibold">
+                  0%
                 </span>
               </div>
               <div className="w-48 h-1 bg-stone-800 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#C5A880] to-[#EAD7BB] transition-all duration-150"
-                  style={{ width: `${Math.max(5, scrollProgress * 100)}%` }}
+                  ref={progressBarRef}
+                  className="h-full bg-gradient-to-r from-[#C5A880] to-[#EAD7BB] will-change-[width]"
+                  style={{ width: '4%' }}
                 />
               </div>
             </div>

@@ -144,36 +144,85 @@ export default function MaterialLaboratory() {
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialSwatch>(MATERIALS[0]);
   const [activeTab, setActiveTab] = useState<'thermal' | 'carbon' | 'patina'>('thermal');
   const [lightReflectionAngle, setLightReflectionAngle] = useState(45);
+  const [currentSwatchIndex, setCurrentSwatchIndex] = useState(0);
   const containerRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const labCardRef = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const progressPercentRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(
     () => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
+      const mm = gsap.matchMedia();
+
+      // Desktop: Pinned section that scrolls through all 5 material swatches
+      mm.add('(min-width: 1024px)', () => {
+        if (!containerRef.current) return;
+
+        let lastIndex = 0;
+
+        const pinTrigger = ScrollTrigger.create({
           trigger: containerRef.current,
-          start: 'top 85%',
-          once: true,
-          toggleActions: 'play none none none',
-        },
+          pin: true,
+          start: 'top top',
+          end: '+=2400',
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          pinSpacing: true,
+          onUpdate: (self) => {
+            const idx = Math.min(
+              MATERIALS.length - 1,
+              Math.max(0, Math.floor(self.progress * MATERIALS.length))
+            );
+
+            if (idx !== lastIndex) {
+              lastIndex = idx;
+              setSelectedMaterial(MATERIALS[idx]);
+              setCurrentSwatchIndex(idx);
+            }
+
+            // Smooth sun reflection angle transition from 20° to 160°
+            setLightReflectionAngle(Math.round(20 + self.progress * 140));
+
+            // Direct progress bar width update
+            if (progressBarRef.current) {
+              progressBarRef.current.style.width = `${Math.max(5, self.progress * 100)}%`;
+            }
+            if (progressPercentRef.current) {
+              progressPercentRef.current.textContent = `${Math.round(self.progress * 100)}%`;
+            }
+          },
+        });
+
+        return () => {
+          pinTrigger.kill();
+        };
       });
 
-      tl.from(titleRef.current, {
-        y: 30,
-        opacity: 0,
-        duration: 0.9,
-        ease: 'power3.out',
-      }).from(
-        labCardRef.current,
-        {
-          y: 40,
-          opacity: 0,
-          duration: 1,
-          ease: 'power3.out',
-        },
-        '-=0.6'
-      );
+      // Mobile/Tablet: Lightweight reveal without screen pinning
+      mm.add('(max-width: 1023px)', () => {
+        if (!containerRef.current) return;
+
+        gsap.fromTo(
+          titleRef.current,
+          { y: 25, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            clearProps: 'all',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top 90%',
+              once: true,
+            },
+          }
+        );
+      });
+
+      return () => mm.revert();
     },
     { scope: containerRef }
   );
@@ -181,42 +230,66 @@ export default function MaterialLaboratory() {
   return (
     <section
       ref={containerRef}
-      className="relative py-24 sm:py-32 bg-[#FAFAF8] text-[#141413] hairline-t hairline-b overflow-hidden"
+      className="relative py-16 sm:py-24 lg:py-0 bg-[#FAFAF8] text-[#141413] hairline-t hairline-b font-sans"
     >
       {/* CAD Grid Backdrop */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#141413_1px,transparent_1px)] bg-[size:32px_32px]" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 lg:h-screen lg:min-h-[640px] lg:max-h-[960px] flex flex-col justify-between pt-6 lg:pt-10 pb-6 lg:pb-8 overflow-hidden">
         
-        {/* Section Header */}
-        <div ref={titleRef} className="max-w-3xl mb-14 sm:mb-18">
-          <div className="flex items-center gap-3 mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
-            <span className="text-[11px] font-mono tracking-[0.28em] uppercase text-[#C5A880]">
-              04 / ARCHITECTURAL MATERIAL LABORATORY
-            </span>
+        {/* Section Header with Pinned Cycle Indicator */}
+        <div ref={titleRef} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-[#E5E3DD]">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse" />
+              <span className="text-[11px] font-mono tracking-[0.28em] uppercase text-[#C5A880]">
+                04 / ARCHITECTURAL MATERIAL LABORATORY
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-light tracking-tight text-[#141413] leading-[1.1] font-sans">
+              Tactile Materiality.{' '}
+              <span className="font-serif italic font-normal text-[#141413]">
+                Thermal Intelligence.
+              </span>
+            </h2>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-light tracking-tight text-[#141413] leading-[1.1] font-sans">
-            Tactile Materiality.{' '}
-            <span className="font-serif italic font-normal text-[#141413]">
-              Thermal Intelligence.
-            </span>
-          </h2>
-          <p className="mt-4 text-base sm:text-lg text-[#6B6862] font-light leading-relaxed">
-            Click any swatch to inspect surface texture, provenance, solar reflectance indices, and 100-year weathering behavior tested inside our materials laboratory.
-          </p>
+
+          {/* Desktop Pinned Scroll Swatch Counter & Progress */}
+          <div className="hidden lg:flex flex-col items-end gap-1.5 font-mono text-xs text-stone-500">
+            <div className="flex items-center gap-2">
+              <span className="text-stone-700 font-medium">
+                SCROLL TO CYCLE: 0{currentSwatchIndex + 1} / 0{MATERIALS.length}
+              </span>
+              <span className="text-[#C5A880] font-semibold">
+                • {selectedMaterial.name.toUpperCase()}
+              </span>
+              <span ref={progressPercentRef} className="text-[#141413] font-bold ml-1">
+                0%
+              </span>
+            </div>
+            <div className="w-52 h-1 bg-[#E5E3DD] rounded-full overflow-hidden">
+              <div
+                ref={progressBarRef}
+                className="h-full bg-gradient-to-r from-[#C5A880] to-[#A67C52] will-change-[width]"
+                style={{ width: '20%' }}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Swatch Selector Strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
-          {MATERIALS.map((mat) => {
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 my-3">
+          {MATERIALS.map((mat, idx) => {
             const isSelected = selectedMaterial.id === mat.id;
             return (
               <button
                 key={mat.id}
                 type="button"
-                onClick={() => setSelectedMaterial(mat)}
-                className={`relative p-3.5 sm:p-4 rounded-2xl border text-left transition-all duration-300 cursor-pointer group flex flex-col justify-between min-h-[130px] ${
+                onClick={() => {
+                  setSelectedMaterial(mat);
+                  setCurrentSwatchIndex(idx);
+                }}
+                className={`relative p-3 rounded-2xl border text-left transition-all duration-300 cursor-pointer group flex flex-col justify-between min-h-[95px] lg:min-h-[105px] ${
                   isSelected
                     ? 'bg-[#141413] border-[#141413] text-white shadow-xl shadow-black/10 scale-[1.02]'
                     : 'bg-[#F5F4F0] border-[#E5E3DD] text-[#141413] hover:border-[#C5A880] hover:bg-white'
@@ -226,22 +299,22 @@ export default function MaterialLaboratory() {
                 {/* Color Dot & Origin */}
                 <div className="flex items-center justify-between">
                   <div
-                    className="w-5 h-5 rounded-full border border-black/10 shadow-sm"
+                    className="w-4 h-4 rounded-full border border-black/10 shadow-sm"
                     style={{ backgroundColor: mat.colorTone }}
                   />
                   {isSelected && (
-                    <span className="text-[10px] font-mono text-[#C5A880] tracking-wider uppercase font-semibold">
-                      ACTIVE
+                    <span className="text-[9px] font-mono text-[#C5A880] tracking-wider uppercase font-semibold">
+                      0{idx + 1} ACTIVE
                     </span>
                   )}
                 </div>
 
                 {/* Swatch Title */}
-                <div className="mt-3">
-                  <h4 className={`text-sm font-semibold tracking-tight ${isSelected ? 'text-white' : 'text-[#141413]'}`}>
+                <div className="mt-2">
+                  <h4 className={`text-xs sm:text-sm font-semibold tracking-tight ${isSelected ? 'text-white' : 'text-[#141413]'}`}>
                     {mat.name}
                   </h4>
-                  <span className={`text-[11px] font-mono block mt-0.5 line-clamp-1 ${isSelected ? 'text-stone-400' : 'text-[#8C8983]'}`}>
+                  <span className={`text-[10px] font-mono block mt-0.5 line-clamp-1 ${isSelected ? 'text-stone-400' : 'text-[#8C8983]'}`}>
                     {mat.subname}
                   </span>
                 </div>
@@ -253,44 +326,45 @@ export default function MaterialLaboratory() {
         {/* Material Inspection Dashboard Card */}
         <div
           ref={labCardRef}
-          className="bg-[#F5F4F0] border border-[#E5E3DD] rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden"
+          className="bg-[#F5F4F0] border border-[#E5E3DD] rounded-2xl sm:rounded-3xl p-4 sm:p-7 lg:p-8 shadow-xl relative overflow-hidden my-auto"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
             
             {/* Left Column: Visual Material Preview & Interactive Light Angle Slider */}
-            <div className="lg:col-span-5 flex flex-col gap-4">
-              <div className="relative aspect-square rounded-2xl overflow-hidden border border-[#E5E3DD] shadow-lg bg-stone-900 group">
+            <div className="lg:col-span-5 flex flex-col gap-3">
+              <div className="relative aspect-[16/10] sm:aspect-video lg:aspect-[4/3] rounded-2xl overflow-hidden border border-[#E5E3DD] shadow-lg bg-stone-900 group">
                 <Image
                   src={selectedMaterial.image}
                   alt={selectedMaterial.name}
                   fill
-                  className="object-cover object-center filter brightness-[0.95] contrast-[1.05] transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 480px"
+                  className="object-cover object-center filter brightness-[0.95] contrast-[1.05] transition-all duration-700 group-hover:scale-105"
                 />
 
                 {/* Dynamic Specular Light Reflectance Simulation Overlay */}
                 <div
                   className="absolute inset-0 pointer-events-none transition-opacity duration-300"
                   style={{
-                    background: `linear-gradient(${lightReflectionAngle}deg, rgba(255,255,255,0.22) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)`,
-                    opacity: 0.85,
+                    background: `linear-gradient(${lightReflectionAngle}deg, rgba(255,255,255,0.25) 0%, transparent 50%, rgba(0,0,0,0.35) 100%)`,
+                    opacity: 0.9,
                   }}
                 />
 
-                <div className="absolute top-4 left-4 bg-black/75 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-mono text-white border border-white/10">
+                <div className="absolute top-3 left-3 bg-black/75 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-mono text-white border border-white/10">
                   TEXTURE: {selectedMaterial.textureType.split(' ')[0]}
                 </div>
 
-                <div className="absolute bottom-4 right-4 bg-black/75 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-mono text-[#C5A880] border border-white/10">
+                <div className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-mono text-[#C5A880] border border-white/10">
                   {selectedMaterial.origin}
                 </div>
               </div>
 
               {/* Light Angle Reflection Slider */}
-              <div className="bg-white p-4 rounded-xl border border-[#E5E3DD] space-y-2">
-                <div className="flex items-center justify-between text-xs font-mono text-[#6B6862]">
+              <div className="bg-white p-3 rounded-xl border border-[#E5E3DD] space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] font-mono text-[#6B6862]">
                   <span className="flex items-center gap-1.5">
                     <Sliders className="w-3.5 h-3.5 text-[#C5A880]" />
-                    <span>SIMULATE SUN AZIMUTH REFLECTANCE</span>
+                    <span>SUN AZIMUTH SPECULAR REFLECTANCE</span>
                   </span>
                   <span className="font-semibold text-[#141413]">{lightReflectionAngle}°</span>
                 </div>
@@ -306,31 +380,31 @@ export default function MaterialLaboratory() {
             </div>
 
             {/* Right Column: In-Depth Specifications & Engineering Benchmarks */}
-            <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
+            <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
               <div>
-                <div className="flex items-center gap-2 text-xs font-mono text-[#C5A880] uppercase tracking-wider mb-1">
+                <div className="flex items-center gap-2 text-[11px] font-mono text-[#C5A880] uppercase tracking-wider mb-1">
                   <Compass className="w-3.5 h-3.5" />
                   <span>SPECIFICATION DOSSIER // {selectedMaterial.id.toUpperCase()}</span>
                 </div>
 
-                <h3 className="text-2xl sm:text-3xl font-serif text-[#141413] tracking-tight">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif text-[#141413] tracking-tight">
                   {selectedMaterial.name}
                 </h3>
                 <p className="text-xs font-mono text-[#8C8983] mt-0.5">
                   Provenance: {selectedMaterial.origin}
                 </p>
 
-                <p className="text-sm sm:text-base text-[#6B6862] font-light mt-3 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#6B6862] font-light mt-2.5 leading-relaxed line-clamp-3">
                   {selectedMaterial.narrative}
                 </p>
               </div>
 
               {/* Spec Tabs Switcher */}
-              <div className="flex gap-2 border-b border-[#E5E3DD] pb-2 text-xs font-mono">
+              <div className="flex gap-4 border-b border-[#E5E3DD] pb-2 text-xs font-mono">
                 <button
                   type="button"
                   onClick={() => setActiveTab('thermal')}
-                  className={`pb-1.5 tracking-wider uppercase transition-colors ${
+                  className={`pb-1 tracking-wider uppercase transition-colors cursor-pointer ${
                     activeTab === 'thermal'
                       ? 'text-[#141413] font-bold border-b-2 border-[#C5A880]'
                       : 'text-[#8C8983] hover:text-[#141413]'
@@ -341,7 +415,7 @@ export default function MaterialLaboratory() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('carbon')}
-                  className={`pb-1.5 tracking-wider uppercase transition-colors ${
+                  className={`pb-1 tracking-wider uppercase transition-colors cursor-pointer ${
                     activeTab === 'carbon'
                       ? 'text-[#141413] font-bold border-b-2 border-[#C5A880]'
                       : 'text-[#8C8983] hover:text-[#141413]'
@@ -352,7 +426,7 @@ export default function MaterialLaboratory() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('patina')}
-                  className={`pb-1.5 tracking-wider uppercase transition-colors ${
+                  className={`pb-1 tracking-wider uppercase transition-colors cursor-pointer ${
                     activeTab === 'patina'
                       ? 'text-[#141413] font-bold border-b-2 border-[#C5A880]'
                       : 'text-[#8C8983] hover:text-[#141413]'
@@ -363,26 +437,25 @@ export default function MaterialLaboratory() {
               </div>
 
               {/* Tab Contents */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 font-mono text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 font-mono text-xs">
                 {activeTab === 'thermal' && (
                   <>
-                    <div className="bg-white p-3.5 rounded-xl border border-[#E5E3DD]">
+                    <div className="bg-white p-3 rounded-xl border border-[#E5E3DD]">
                       <span className="text-[#8C8983] text-[10px] block">BULK DENSITY</span>
-                      <span className="text-[#141413] text-base font-semibold mt-0.5 block">
+                      <span className="text-[#141413] text-sm sm:text-base font-semibold mt-0.5 block">
                         {selectedMaterial.specs.density}
                       </span>
                     </div>
-                    <div className="bg-white p-3.5 rounded-xl border border-[#E5E3DD]">
+                    <div className="bg-white p-3 rounded-xl border border-[#E5E3DD]">
                       <span className="text-[#8C8983] text-[10px] block">THERMAL CONDUCTIVITY</span>
-                      <span className="text-[#C5A880] text-base font-semibold mt-0.5 block">
+                      <span className="text-[#C5A880] text-sm sm:text-base font-semibold mt-0.5 block">
                         {selectedMaterial.specs.thermalConductivity}
                       </span>
                     </div>
-                    <div className="bg-white p-3.5 rounded-xl border border-[#E5E3DD]">
+                    <div className="bg-white p-3 rounded-xl border border-[#E5E3DD]">
                       <span className="text-[#8C8983] text-[10px] block">SOLAR REFLECTANCE</span>
-                      <span className="text-[#141413] text-base font-semibold mt-0.5 block">
-                        {selectedMaterial.specs.solarReflectance.split(' ')[0]}{' '}
-                        {selectedMaterial.specs.solarReflectance.split(' ')[1]}
+                      <span className="text-[#141413] text-sm sm:text-base font-semibold mt-0.5 block">
+                        {selectedMaterial.specs.solarReflectance.split(' ')[0]}
                       </span>
                     </div>
                   </>
@@ -390,22 +463,21 @@ export default function MaterialLaboratory() {
 
                 {activeTab === 'carbon' && (
                   <>
-                    <div className="bg-white p-3.5 rounded-xl border border-[#E5E3DD]">
+                    <div className="bg-white p-3 rounded-xl border border-[#E5E3DD]">
                       <span className="text-[#8C8983] text-[10px] block">EMBODIED CARBON</span>
-                      <span className="text-emerald-700 text-base font-semibold mt-0.5 block">
+                      <span className="text-emerald-700 text-sm sm:text-base font-semibold mt-0.5 block">
                         {selectedMaterial.specs.embodiedCarbon.split(' ')[0]} kg CO₂e
                       </span>
                     </div>
-                    <div className="bg-white p-3.5 rounded-xl border border-[#E5E3DD]">
+                    <div className="bg-white p-3 rounded-xl border border-[#E5E3DD]">
                       <span className="text-[#8C8983] text-[10px] block">ACOUSTIC RATING</span>
-                      <span className="text-[#141413] text-base font-semibold mt-0.5 block">
-                        {selectedMaterial.specs.acousticAbsorption.split(' ')[0]}{' '}
-                        {selectedMaterial.specs.acousticAbsorption.split(' ')[1]}
+                      <span className="text-[#141413] text-sm sm:text-base font-semibold mt-0.5 block">
+                        {selectedMaterial.specs.acousticAbsorption.split(' ')[0]}
                       </span>
                     </div>
-                    <div className="bg-white p-3.5 rounded-xl border border-[#E5E3DD]">
+                    <div className="bg-white p-3 rounded-xl border border-[#E5E3DD]">
                       <span className="text-[#8C8983] text-[10px] block">FEEDSTOCK CIRCULARITY</span>
-                      <span className="text-[#C5A880] text-base font-semibold mt-0.5 block">
+                      <span className="text-[#C5A880] text-sm sm:text-base font-semibold mt-0.5 block">
                         100% RECYCLABLE
                       </span>
                     </div>
@@ -413,11 +485,11 @@ export default function MaterialLaboratory() {
                 )}
 
                 {activeTab === 'patina' && (
-                  <div className="col-span-2 sm:col-span-3 bg-white p-4 rounded-xl border border-[#E5E3DD]">
+                  <div className="col-span-2 sm:col-span-3 bg-white p-3 rounded-xl border border-[#E5E3DD]">
                     <span className="text-[#8C8983] text-[10px] block mb-1">
                       100-YEAR ATMOSPHERIC PROFILE
                     </span>
-                    <p className="text-[#141413] text-xs font-sans leading-relaxed">
+                    <p className="text-[#141413] text-xs font-sans leading-relaxed line-clamp-2">
                       {selectedMaterial.specs.weatheringProfile}
                     </p>
                   </div>
@@ -425,19 +497,19 @@ export default function MaterialLaboratory() {
               </div>
 
               {/* Tested Commissions Strip */}
-              <div className="pt-2 text-xs font-mono text-[#6B6862]">
+              <div className="pt-1 text-[11px] font-mono text-[#6B6862] line-clamp-1">
                 <span className="text-[#8C8983]">TESTED COMMISSIONS: </span>
                 <span className="text-[#141413] font-medium">
                   {selectedMaterial.testedCommissions.join(' • ')}
                 </span>
               </div>
 
-              {/* Action Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row gap-3">
+              {/* Action Button */}
+              <div className="pt-1">
                 <button
                   type="button"
                   onClick={() => openConsultationModal('Material Specification')}
-                  className="px-6 py-3.5 bg-[#141413] hover:bg-[#2A2825] text-white font-mono tracking-[0.2em] text-xs font-semibold uppercase rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+                  className="px-5 py-3 bg-[#141413] hover:bg-[#2A2825] text-white font-mono tracking-[0.18em] text-xs font-semibold uppercase rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Box className="w-4 h-4 text-[#C5A880]" />
                   <span>REQUEST MATERIAL SAMPLE KIT</span>
