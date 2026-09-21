@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Conceptzilla ARCHIØN architectural luxury palette */
+  --bg-warm: #FAFAF8;
+  --bg-card: #F5F4F0;
+  --bg-dark: #111111;
+  --bg-dark-card: #1C1B19;
+  --gold-accent: #C5A880;
+  --gold-light: #EAD7BB;
+  --gold-dark: #A67C52;
+  --text-primary: #141413;
+  --text-muted: #6B6862;
+  --text-secondary: #8C8983;
+  --border-light: #E5E3DD;
+  --border-dark: #2A2825;
+
+  --background: var(--bg-warm);
+  --foreground: var(--text-primary);
+}
+
+@theme {
+  --color-bg-warm: #FAFAF8;
+  --color-bg-card: #F5F4F0;
+  --color-bg-dark: #111111;
+  --color-bg-dark-card: #1C1B19;
+  --color-gold-accent: #C5A880;
+  --color-gold-light: #EAD7BB;
+  --color-gold-dark: #A67C52;
+  --color-text-primary: #141413;
+  --color-text-muted: #6B6862;
+  --color-text-secondary: #8C8983;
+  --color-border-light: #E5E3DD;
+  --color-border-dark: #2A2825;
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-serif: 'Cinzel', serif;
+}
+
+/* Custom Selection Highlight */
+::selection {
+  background-color: var(--gold-accent);
+  color: #111111;
+}
+
+::-moz-selection {
+  background-color: var(--gold-accent);
+  color: #111111;
+}
+
+/* Lenis Smooth Scroll Integration */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Base resets & typography */
+html {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-warm);
+  color: var(--text-primary);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100%;
+  background-color: var(--bg-warm);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* Architectural Hairline Divider Utilities */
+.hairline-b {
+  border-bottom: 1px solid var(--border-light);
+}
+
+.hairline-t {
+  border-top: 1px solid var(--border-light);
+}
+
+.hairline-l {
+  border-left: 1px solid var(--border-light);
+}
+
+.hairline-r {
+  border-right: 1px solid var(--border-light);
+}
+
+.hairline-box {
+  border: 1px solid var(--border-light);
+}
+
+/* Architectural Hatch Patterns via CSS SVG & Linear Gradients */
+.bg-hatch-diagonal {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--border-light) 0,
+    var(--border-light) 1px,
+    transparent 0,
+    transparent 10px
+  );
+}
+
+.bg-hatch-diagonal-dark {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(197, 168, 128, 0.15) 0,
+    rgba(197, 168, 128, 0.15) 1px,
+    transparent 0,
+    transparent 10px
+  );
+}
+
+.bg-hatch-vertical {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--border-light) 0,
+    var(--border-light) 1px,
+    transparent 0,
+    transparent 12px
+  );
+}
+
+.bg-hatch-vertical-dense {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--border-light) 0,
+    var(--border-light) 1px,
+    transparent 0,
+    transparent 6px
+  );
+}
+
+.bg-hatch-cross {
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      var(--border-light) 0,
+      var(--border-light) 1px,
+      transparent 0,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--border-light) 0,
+      var(--border-light) 1px,
+      transparent 0,
+      transparent 12px
+    );
+}
+
+.bg-blueprint-grid {
+  background-size: 32px 32px;
+  background-image:
+    linear-gradient(to right, rgba(229, 227, 221, 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(229, 227, 221, 0.6) 1px, transparent 1px);
+}
+
+/* Refined Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-warm);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4D1C8;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-accent);
+}
