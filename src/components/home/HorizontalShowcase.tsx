@@ -102,8 +102,7 @@ export default function HorizontalShowcase() {
       });
 
       return () => mm.revert();
-    },
-    { scope: containerRef }
+    }
   );
 
   // Mobile scroll buttons

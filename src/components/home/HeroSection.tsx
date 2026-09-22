@@ -201,8 +201,7 @@ export default function HeroSection({ onSelectCategory }: HeroSectionProps) {
           },
         });
       }
-    },
-    { scope: containerRef }
+    }
   );
 
   return (

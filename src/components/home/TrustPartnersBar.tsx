@@ -93,10 +93,9 @@ export default function TrustPartnersBar() {
           ease: 'power3.out',
           clearProps: 'all',
         },
-        '-=0.3'
+          '-=0.3'
       );
-    },
-    { scope: containerRef }
+    }
   );
 
   return (

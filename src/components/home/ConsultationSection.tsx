@@ -43,8 +43,7 @@ export default function ConsultationSection() {
           toggleActions: 'play none none none',
         },
       });
-    },
-    { scope: containerRef }
+    }
   );
 
   const handleSubmit = async (e: React.FormEvent) => {

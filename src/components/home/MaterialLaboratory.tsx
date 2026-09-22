@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useGSAP } from '@gsap/react';
-import { gsap } from '@/lib/animations';
+import { gsap, ScrollTrigger } from '@/lib/animations';
 import {
   Compass,
   Sliders,
@@ -223,8 +223,7 @@ export default function MaterialLaboratory() {
       });
 
       return () => mm.revert();
-    },
-    { scope: containerRef }
+    }
   );
 
   return (

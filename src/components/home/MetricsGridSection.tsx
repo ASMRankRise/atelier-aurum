@@ -51,8 +51,7 @@ export default function MetricsGridSection() {
           },
           '-=0.5'
         );
-    },
-    { scope: containerRef }
+    }
   );
 
   return (
