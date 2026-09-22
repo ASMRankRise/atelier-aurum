@@ -76,7 +76,7 @@ export default function ArchitecturalHatch({
           },
         }
       );
-    }, containerRef);
+    });
 
     return () => ctx.revert();
   }, [animateOnScroll, patternOpacity]);

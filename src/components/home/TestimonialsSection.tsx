@@ -52,8 +52,7 @@ export default function TestimonialsSection() {
           toggleActions: 'play none none none',
         },
       });
-    },
-    { scope: containerRef }
+    }
   );
 
   return (

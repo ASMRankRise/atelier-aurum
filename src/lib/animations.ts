@@ -1,12 +1,13 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 
 // Safely register plugins on client only to prevent SSR / static generation failures
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
-export { gsap, ScrollTrigger };
+export { gsap, ScrollTrigger, useGSAP };
 
 /**
  * Architectural luxury easing presets matching high-end editorial aesthetics

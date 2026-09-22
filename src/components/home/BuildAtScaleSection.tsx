@@ -79,8 +79,7 @@ export default function BuildAtScaleSection() {
           setCount3(Math.round(counterTarget.c3));
         },
       });
-    },
-    { scope: containerRef }
+    }
   );
 
   return (
